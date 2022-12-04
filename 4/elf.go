@@ -1,0 +1,90 @@
+package main
+
+import (
+	"io/ioutil"
+	"log"
+	"net/http"
+	"strconv"
+	"strings"
+)
+
+const (
+	maxAge       = 300
+	session      = "53616c7465645f5f303f959de1a9733fa60cea3722f02a00fb8404cd9d9fa66c0d8e0e4d56c971bb67d0482d452070e01de490fc97d734af44571de48a07ae3d"
+	adventOfCode = "https://adventofcode.com/2022/day/4/input"
+)
+
+func main() {
+	var client http.Client
+
+	cookie := &http.Cookie{
+		Name:   "session",
+		Value:  session,
+		MaxAge: maxAge,
+	}
+
+	req, err := http.NewRequest("GET", adventOfCode, nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	req.AddCookie(cookie)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	lines := strings.Split(string(body), "\n")
+
+	sum := 0
+	sumB := 0
+	for _, l := range lines {
+		if len(l) != 0 {
+			ll := strings.Split(l, ",")
+			leftRange := parse(strings.Split(ll[0], "-"))
+			rightRange := parse(strings.Split(ll[1], "-"))
+			inter := len(intersection(leftRange, rightRange))
+			if inter == len(leftRange) || inter == len(rightRange) {
+				sum++
+			}
+			if inter > 0 {
+				sumB++
+			}
+		}
+	}
+
+	println(sum)
+	println(sumB)
+}
+
+func parse(arr []string) []int {
+	l, _ := strconv.Atoi(arr[0])
+	r, _ := strconv.Atoi(arr[1])
+
+	var ret []int
+	for i := l; i <= r; i++ {
+		ret = append(ret, i)
+	}
+
+	return ret
+}
+
+func intersection(s1, s2 []int) []int {
+	var inter []int
+	h := make(map[int]bool)
+	for _, e := range s1 {
+		h[e] = true
+	}
+	for _, e := range s2 {
+		if h[e] {
+			inter = append(inter, e)
+		}
+	}
+	return inter
+}
