@@ -74,3 +74,15 @@ func removeDups[v int | rune](elements []v) []v {
 	}
 	return ret
 }
+
+func Min(arr []int) int {
+	var min int = arr[0]
+
+	for _, v := range arr {
+		if min > v {
+			min = v
+		}
+	}
+
+	return min
+}
