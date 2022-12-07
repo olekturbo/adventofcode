@@ -2,6 +2,7 @@ package main
 
 import (
 	"adventofcode"
+	"fmt"
 	"strconv"
 	"strings"
 	"unicode"
@@ -16,9 +17,15 @@ const (
 
 type dir struct {
 	dirs   []*dir
+	files  []*file
 	parent *dir
 	name   string
 	size   int
+}
+
+type file struct {
+	name string
+	size int
 }
 
 var root *dir
@@ -51,6 +58,8 @@ func main() {
 				split := strings.Split(l, " ")
 				size, _ := strconv.Atoi(split[0])
 				current.incSize(size)
+				newFile := &file{name: split[1], size: size}
+				current.files = append(current.files, newFile)
 			}
 		}
 	}
@@ -59,12 +68,27 @@ func main() {
 
 	needSize := minimumSize - (systemSize - root.size)
 	println(adventofcode.Min(root.findNeededSizes(needSize)))
+
+	root.print(0)
 }
 
 func (d *dir) incSize(size int) {
 	d.size += size
 	if d.parent != nil {
 		d.parent.incSize(size)
+	}
+}
+
+func (d *dir) print(i int) {
+	fmt.Print(strings.Repeat("  ", i))
+	fmt.Printf("%s DIR %d\n", d.name, d.size)
+	for _, f := range d.files {
+		fmt.Print(strings.Repeat("  ", i+1))
+		fmt.Printf("%s %d\n", f.name, f.size)
+	}
+
+	for _, dd := range d.dirs {
+		dd.print(i + 1)
 	}
 }
 
