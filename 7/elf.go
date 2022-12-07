@@ -65,9 +65,7 @@ func main() {
 	}
 
 	println(root.countTotalSize())
-
-	needSize := minimumSize - (systemSize - root.size)
-	println(adventofcode.Min(root.findNeededSizes(needSize)))
+	println(adventofcode.Min(root.findNeededSizes()))
 
 	root.print(0)
 }
@@ -106,15 +104,15 @@ func (d *dir) countTotalSize() int {
 	return total
 }
 
-func (d *dir) findNeededSizes(needSize int) []int {
+func (d *dir) findNeededSizes() []int {
 	var szs []int
 
-	if d.size >= needSize {
+	if d.size >= minimumSize-(systemSize-root.size) {
 		szs = append(szs, d.size)
 	}
 
 	for _, dd := range d.dirs {
-		szs = append(szs, dd.findNeededSizes(needSize)...)
+		szs = append(szs, dd.findNeededSizes()...)
 	}
 
 	return szs
