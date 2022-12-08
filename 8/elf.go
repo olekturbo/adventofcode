@@ -77,5 +77,55 @@ func main() {
 		}
 	}
 
+	var views []int
+
+	for i, v := range trees {
+		for j := range v {
+			scenic := make([]int, 4)
+
+			for k := j - 1; k >= 0; k-- {
+				if trees[i][j] > trees[i][k] {
+					scenic[0]++
+				} else {
+					scenic[0]++
+					break
+				}
+			}
+			for k := j + 1; k < len(trees); k++ {
+				if trees[i][j] > trees[i][k] {
+					scenic[1]++
+				} else {
+					scenic[1]++
+					break
+				}
+			}
+			for k := i - 1; k >= 0; k-- {
+				if trees[i][j] > trees[k][j] {
+					scenic[2]++
+				} else {
+					scenic[2]++
+					break
+				}
+			}
+			for k := i + 1; k < len(trees); k++ {
+				if trees[i][j] > trees[k][j] {
+					scenic[3]++
+				} else {
+					scenic[3]++
+					break
+				}
+			}
+
+			x := 1
+
+			for _, ii := range scenic {
+				x *= ii
+			}
+
+			views = append(views, x)
+		}
+	}
+
 	println(sum)
+	println(adventofcode.Max(views))
 }
