@@ -86,3 +86,15 @@ func Min(arr []int) int {
 
 	return min
 }
+
+func Max(arr []int) int {
+	var max = arr[0]
+
+	for _, v := range arr {
+		if max < v {
+			max = v
+		}
+	}
+
+	return max
+}
