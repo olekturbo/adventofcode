@@ -18,6 +18,8 @@ const (
 	leftDown  = "LD"
 	rightUp   = "RU"
 	rightDown = "RD"
+
+	ropeLength = 10
 )
 
 type point struct {
@@ -48,84 +50,92 @@ func main() {
 		}
 	}
 
-	head := newPoint()
-	tail := newPoint()
+	var rope []*point
+
+	for i := 0; i < ropeLength; i++ {
+		rope = append(rope, newPoint())
+	}
 
 	for _, m := range moves {
 		for i := 0; i < m.count; i++ {
 			switch m.direction {
 			case up:
-				head.y++
+				rope[0].y++
 			case down:
-				head.y--
+				rope[0].y--
 			case right:
-				head.x++
+				rope[0].x++
 			case left:
-				head.x--
-			}
-			switch moveTail(head, tail) {
-			case up:
-				tail.y++
-			case down:
-				tail.y--
-			case right:
-				tail.x++
-			case left:
-				tail.x--
-			case rightUp:
-				tail.x++
-				tail.y++
-			case rightDown:
-				tail.x++
-				tail.y--
-			case leftDown:
-				tail.x--
-				tail.y--
-			case leftUp:
-				tail.x--
-				tail.y++
+				rope[0].x--
 			}
 
-			tailPoint := point{x: tail.x, y: tail.y}
-			tailPointsMap[tailPoint] = true
+			for j := 1; j < ropeLength; j++ {
+				switch moveRope(rope[j-1], rope[j]) {
+				case up:
+					rope[j].y++
+				case down:
+					rope[j].y--
+				case right:
+					rope[j].x++
+				case left:
+					rope[j].x--
+				case rightUp:
+					rope[j].x++
+					rope[j].y++
+				case rightDown:
+					rope[j].x++
+					rope[j].y--
+				case leftDown:
+					rope[j].x--
+					rope[j].y--
+				case leftUp:
+					rope[j].x--
+					rope[j].y++
+				}
+				if j == len(rope)-1 {
+					tailPoint := point{x: rope[j].x, y: rope[j].y}
+					tailPointsMap[tailPoint] = true
+				}
+			}
 		}
 	}
-	fmt.Println(head)
-	fmt.Println(tail)
+	for _, r := range rope {
+		fmt.Println(r)
+	}
 	fmt.Println(len(tailPointsMap))
 }
 
-func moveTail(head *point, tail *point) string {
-	if head.y == tail.y {
-		if head.x == tail.x+2 {
+func moveRope(r1 *point, r2 *point) string {
+	if r1.y == r2.y {
+		if r1.x == r2.x+2 {
 			return right
 		}
-		if head.x == tail.x-2 {
+		if r1.x == r2.x-2 {
 			return left
 		}
 	}
-	if head.x == tail.x {
-		if head.y == tail.y+2 {
+	if r1.x == r2.x {
+		if r1.y == r2.y+2 {
 			return up
 		}
-		if head.y == tail.y-2 {
+		if r1.y == r2.y-2 {
 			return down
 		}
 	}
-	if head.x == tail.x+2 && head.y == tail.y+1 || head.x == tail.x+1 && head.y == tail.y+2 ||
-		head.x == tail.x+2 && head.y == tail.y+2 {
+	if r1.x == r2.x+2 && r1.y == r2.y+1 || r1.x == r2.x+1 && r1.y == r2.y+2 ||
+		r1.x == r2.x+2 && r1.y == r2.y+2 {
 		return rightUp
 	}
-	if head.x == tail.x+2 && head.y == tail.y-1 || head.x == tail.x+1 && head.y == tail.y-2 ||
-		head.x == tail.x+2 && head.y == tail.y-2 {
+	if r1.x == r2.x+2 && r1.y == r2.y-1 || r1.x == r2.x+1 && r1.y == r2.y-2 ||
+		r1.x == r2.x+2 && r1.y == r2.y-2 {
 		return rightDown
 	}
-	if head.x == tail.x-2 && head.y == tail.y+1 || head.x == tail.x-1 && head.y == tail.y+2 ||
-		head.x == tail.x-2 && head.y == tail.y+2 {
+	if r1.x == r2.x-2 && r1.y == r2.y+1 || r1.x == r2.x-1 && r1.y == r2.y+2 ||
+		r1.x == r2.x-2 && r1.y == r2.y+2 {
 		return leftUp
 	}
-	if head.x == tail.x-2 && head.y == tail.y-1 || head.x == tail.x-1 && head.y == tail.y-2 ||
-		head.x == tail.x-2 && head.y == tail.y-2 {
+	if r1.x == r2.x-2 && r1.y == r2.y-1 || r1.x == r2.x-1 && r1.y == r2.y-2 ||
+		r1.x == r2.x-2 && r1.y == r2.y-2 {
 		return leftDown
 	}
 	return ""
