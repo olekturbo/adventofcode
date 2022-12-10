@@ -39,13 +39,16 @@ func main() {
 	cycles := 0
 	x := 1
 	var strengths []int
+	var crt [6][40]string
 
 	for _, in := range instructions {
 		if in.command == noop {
+			drawPixel(x, cycles, &crt)
 			cycles++
 			strengths = tryAddStrength(strengths, cycles, x)
 		} else {
 			for i := 0; i < 2; i++ {
+				drawPixel(x, cycles, &crt)
 				cycles++
 				strengths = tryAddStrength(strengths, cycles, x)
 			}
@@ -55,13 +58,30 @@ func main() {
 
 	fmt.Println(strengths)
 	fmt.Println(adventofcode.Sum(strengths))
+
+	for i := range crt {
+		for j := range crt[i] {
+			print(crt[i][j])
+		}
+		println()
+	}
 }
 
 func tryAddStrength(strengths []int, cycle, strength int) []int {
-	mustCycles := []int{20, 60, 100, 140, 180, 220}
+	var mustCycles = []int{20, 60, 100, 140, 180, 220}
+
 	if adventofcode.Contains(mustCycles, cycle) {
 		strengths = append(strengths, strength*cycle)
 	}
 
 	return strengths
+}
+
+func drawPixel(x int, cycle int, crt *[6][40]string) {
+	i, j := cycle/40, cycle%40
+	if x == j || x == j+1 || x == j-1 {
+		crt[i][j] = "#"
+	} else {
+		crt[i][j] = "."
+	}
 }
