@@ -98,3 +98,23 @@ func Max(arr []int) int {
 
 	return max
 }
+
+func Contains[v int](s []v, str v) bool {
+	for _, vv := range s {
+		if vv == str {
+			return true
+		}
+	}
+
+	return false
+}
+
+func Sum[v int](array []v) v {
+	var s v
+
+	for _, vv := range array {
+		s += vv
+	}
+
+	return s
+}
