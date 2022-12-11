@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -117,4 +118,21 @@ func Sum[v int](array []v) v {
 	}
 
 	return s
+}
+
+func MustAtoiArr(s []string) []int {
+	var i []int
+	for _, str := range s {
+		i = append(i, MustAtoi(str))
+	}
+
+	return i
+}
+
+func MustAtoi(s string) int {
+	atoi, err := strconv.Atoi(s)
+	if err != nil {
+		panic(err)
+	}
+	return atoi
 }
