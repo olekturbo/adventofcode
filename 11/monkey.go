@@ -11,7 +11,7 @@ import (
 const (
 	day = "11"
 
-	rounds = 20
+	rounds = 10000
 
 	startingItems = "Starting items: "
 	operation     = "Operation: new = old "
@@ -31,6 +31,7 @@ type monkey struct {
 func main() {
 
 	var monkeys []monkey
+	nww := 1
 
 	parts := strings.Split(string(adventofcode.Request(day)), "\n\n")
 	for _, part := range parts {
@@ -59,6 +60,7 @@ func main() {
 			}
 		}
 		monkeys = append(monkeys, m)
+		nww *= m.test
 	}
 
 	inspections := make([]int, len(monkeys))
@@ -84,7 +86,12 @@ func main() {
 					value = m.items[0] * opValue
 				}
 
-				value = int(math.Floor(float64(value / 3)))
+				if rounds == 20 {
+					value = int(math.Floor(float64(value / 3)))
+				} else {
+					value %= nww
+				}
+
 				testPassed := value%m.test == 0
 
 				if testPassed {
@@ -101,4 +108,5 @@ func main() {
 	fmt.Println(monkeys)
 	sort.Ints(inspections)
 	fmt.Println(inspections[len(inspections)-1] * inspections[len(inspections)-2])
+	println(nww)
 }
